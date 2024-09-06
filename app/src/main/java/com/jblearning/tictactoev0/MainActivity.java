@@ -1,15 +1,19 @@
 package com.jblearning.tictactoev0;
 
+import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.TextView;
+import android.view.Gravity;
 
 public class MainActivity extends AppCompatActivity {
     private TicTacToe tttGame;
     private Button[][] buttons;
+    private TextView status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         // Create the layout manager as a GridLayout
         GridLayout gridLayout = new GridLayout(this);
         gridLayout.setColumnCount(TicTacToe.SIDE);
-        gridLayout.setRowCount(TicTacToe.SIDE);
+        gridLayout.setRowCount(TicTacToe.SIDE + 1);
 
         // Create the buttons and add them to gridLayout
         buttons = new Button[TicTacToe.SIDE][TicTacToe.SIDE];
@@ -41,6 +45,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        // Set up layout parameters of 4th row of gridLayout
+        status = new TextView(this);
+        GridLayout.Spec rowSpec = GridLayout.spec(TicTacToe.SIDE, 1);
+        GridLayout.Spec columnSpec = GridLayout.spec(0, TicTacToe.SIDE);
+        GridLayout.LayoutParams lpstatus = new GridLayout.LayoutParams(rowSpec, columnSpec);
+        status.setLayoutParams(lpstatus);
+
+        // Set up status' characteristics
+        status.setWidth(TicTacToe.SIDE * w);
+        status.setHeight(w);
+        status.setGravity(Gravity.CENTER);
+        status.setBackgroundColor(Color.GREEN);
+        status.setTextSize((int) (w * .15));
+        status.setText(tttGame.result());
+
+        gridLayout.addView(status);
+
         // Set gridLayout as the View of this Activity
         setContentView(gridLayout);
     }
@@ -52,8 +73,10 @@ public class MainActivity extends AppCompatActivity {
         } else if (play == 2) {
             buttons[row][col].setText("O");
         }
-        if (tttGame.isGameOver()) { // game over, disable buttons
+        if (tttGame.isGameOver()) {
+            status.setBackgroundColor(Color.RED);
             enableButtons(false);
+            status.setText(tttGame.result());
         }
     }
 
