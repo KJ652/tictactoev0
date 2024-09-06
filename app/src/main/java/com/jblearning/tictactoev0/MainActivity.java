@@ -3,18 +3,18 @@ package com.jblearning.tictactoev0;
 import android.graphics.Point;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
 
 public class MainActivity extends AppCompatActivity {
+    private TicTacToe tttGame;
     private Button[][] buttons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView( R.layout.activity_main );
+        tttGame = new TicTacToe();
         buildGuiByCode();
     }
 
@@ -46,13 +46,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update(int row, int col) {
-        Log.v("MainActivity", "Inside update: " + row + ", " + col);
-        buttons[row][col].setText("X");
+        int play = tttGame.play(row, col);
+        if (play == 1) {
+            buttons[row][col].setText("X");
+        } else if (play == 2) {
+            buttons[row][col].setText("O");
+        }
+        if (tttGame.isGameOver()) { // game over, disable buttons
+            enableButtons(false);
+        }
+    }
+
+    public void enableButtons(boolean enabled) {
+        for (int row = 0; row < TicTacToe.SIDE; row++) {
+            for (int col = 0; col < TicTacToe.SIDE; col++) {
+                buttons[row][col].setEnabled(enabled);
+            }
+        }
     }
 
     private class ButtonHandler implements View.OnClickListener {
         public void onClick(View v) {
-            Log.v("MainActivity", "Inside onClick, v = " + v);
             for (int row = 0; row < TicTacToe.SIDE; row++) {
                 for (int column = 0; column < TicTacToe.SIDE; column++) {
                     if (v == buttons[row][column]) {
