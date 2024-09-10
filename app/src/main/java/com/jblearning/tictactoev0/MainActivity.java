@@ -1,8 +1,10 @@
 package com.jblearning.tictactoev0;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             status.setBackgroundColor(Color.RED);
             enableButtons(false);
             status.setText(tttGame.result());
+            showNewGameDialog();  // Offer to play again
         }
     }
 
@@ -88,14 +91,44 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void resetButtons() {
+        for (int row = 0; row < TicTacToe.SIDE; row++) {
+            for (int col = 0; col < TicTacToe.SIDE; col++)
+                buttons[row][col].setText("");
+        }
+    }
+
+    public void showNewGameDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Well that was fun.");
+        alert.setMessage("play again?");
+        PlayDialog playAgain = new PlayDialog();
+        alert.setPositiveButton("YES", playAgain);
+        alert.setNegativeButton("NO", playAgain);
+        alert.show();
+    }
+
     private class ButtonHandler implements View.OnClickListener {
         public void onClick(View v) {
             for (int row = 0; row < TicTacToe.SIDE; row++) {
                 for (int column = 0; column < TicTacToe.SIDE; column++) {
-                    if (v == buttons[row][column]) {
+                    if (v == buttons[row][column])
                         update(row, column);
-                    }
                 }
+            }
+        }
+    }
+
+    private class PlayDialog implements DialogInterface.OnClickListener {
+        public void onClick(DialogInterface dialog, int id) {
+            if (id == -1) { // YES button
+                tttGame.resetGame();
+                enableButtons(true);
+                resetButtons();
+                status.setBackgroundColor(Color.GREEN);
+                status.setText(tttGame.result());
+            } else if (id == -2) { // NO button
+                MainActivity.this.finish();
             }
         }
     }
